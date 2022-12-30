@@ -1,5 +1,4 @@
 import { ChatGPTAPIBrowser } from 'chatgpt';
-import puppeteer from 'puppeteer';
 
 /**
  * @typedef ChatGptClientArgs
@@ -51,7 +50,7 @@ class ChatGptClient {
             password: args.accPassword,
             proxyServer: args.proxyServer ?? undefined,
             isGoogleLogin: args.isGoogleLogin ?? false,
-            executablePath: puppeteer.executablePath() || "/usr/bin/chromium",
+            executablePath: '/usr/bin/chromium',
         });
 
         /** @type {number} */
