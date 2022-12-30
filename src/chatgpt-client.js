@@ -51,7 +51,7 @@ class ChatGptClient {
             password: args.accPassword,
             proxyServer: args.proxyServer ?? undefined,
             isGoogleLogin: args.isGoogleLogin ?? false,
-            executablePath: puppeteer.executablePath(),
+            executablePath: puppeteer.executablePath() || "/usr/bin/chromium",
         });
 
         /** @type {number} */
