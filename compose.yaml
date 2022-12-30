@@ -1,0 +1,12 @@
+x-backend-common: &backend-common
+  image: chatgpt-slackbot:latest
+  build: .
+  volumes:
+    - ./src:/app/src
+  tty: true
+  restart: always
+  env_file: .env
+
+services:
+  chatgpt-slackbot:
+    <<: *backend-common

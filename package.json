@@ -2,15 +2,18 @@
   "name": "chatgpt-slackbot",
   "description": "",
   "type": "module",
-  "main": "index.js",
+  "main": "src/app.js",
+  "scripts": {
+    "start": "node src/app.js"
+  },
   "dependencies": {
-    "@redis/client": "^1.4.2",
-    "@slack/bolt": "^3.12.2",
-    "chatgpt": "^3.3.5",
-    "dotenv": "^16.0.3",
-    "puppeteer": "^19.4.0"
+    "@redis/client": "1.4.2",
+    "@slack/bolt": "3.12.2",
+    "chatgpt": "3.3.8",
+    "dotenv": "16.0.3",
+    "puppeteer": "19.4.1"
   },
   "devDependencies": {
-    "eslint": "^8.30.0"
+    "eslint": "8.30.0"
   }
 }

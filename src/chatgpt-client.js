@@ -1,6 +1,5 @@
-import { ChatGPTAPIBrowser } from 'chatgpt'
-import RedisQueue from './redis-queue.js';
-import puppeteer from "puppeteer";
+import { ChatGPTAPIBrowser } from 'chatgpt';
+import puppeteer from 'puppeteer';
 
 /**
  * @typedef ChatGptClientArgs
@@ -40,15 +39,12 @@ import puppeteer from "puppeteer";
  * @param {SlackMeta} slackMeta
  */
 
-
 class ChatGptClient {
-
     /**
      * @param {number} clientId
-     * @param {ChatGptClientArgs} args 
+     * @param {ChatGptClientArgs} args
      */
     constructor(clientId, args) {
-
         this.clientId = clientId;
         this.chatApi = new ChatGPTAPIBrowser({
             email: args.accEmail,
@@ -87,11 +83,12 @@ class ChatGptClient {
      * @param {number} [clientId]
      * @return {Promise<ChatResponse>}
      */
-    static async ask(question, slackMeta, clientId) {
-        if (clientId) {
-            await RedisQueue.getInstance().enqueue(`ChatGptClient-${clientId}`, { question, slackMeta });
-        } else {
-            await RedisQueue.getInstance().enqueue(`ChatGptClient-common`, { question, slackMeta });
+    async ask(question, slackMeta, clientId) {
+        try {
+            const answer = await this._handleAsk(question, true);
+            await this.answerCallback(answer, question, slackMeta);
+        } catch (err) {
+            await this.errorCallback(err, question, slackMeta);
         }
     }
 
@@ -110,42 +107,23 @@ class ChatGptClient {
     }
 
     /**
-     * Start listening to queue.
-     */
-    async startListenQueue() {
-        console.log('Start listening to queue')
-        while (true) {
-
-            const item = await RedisQueue.getInstance().dequeue(`ChatGptClient-common`);
-            if (item) {
-                try {
-                    const answer = await this._handleAsk(item.question, true);
-                    await this.answerCallback(answer, item.question, item.slackMeta);
-                } catch (err) {
-                    await this.errorCallback(err, item.question, item.slackMeta);
-                }
-            }
-
-            // wait for queue interval
-            await new Promise(r => setTimeout(r, this.queueIntervalMs));
-        }
-    }
-
-    /**
-     * @param {ChatGptQuestion} question 
-     * @param {boolean} shouldRetry 
+     * @param {ChatGptQuestion} question
+     * @param {boolean} shouldRetry
      * @returns {ChatGptAnswer}
      */
     async _handleAsk(question, shouldRetry) {
         try {
-            console.log(`[${new Date().toISOString()}] chatgpt_request ${JSON.stringify({ question, shouldRetry })}`);
-            
+            console.log(`[${new Date().toISOString()}] chatgpt_request ${JSON.stringify({
+                question,
+                shouldRetry
+            })}`);
+
             const result = await this.chatApi.sendMessage(question.prompt, {
                 conversationId: question.conversationId,
                 parentMessageId: question.parentMessageId,
                 timeoutMs: this.requestTimeoutMs,
             });
-            console.log(`[${new Date().toISOString()}] chatgpt_response ${JSON.stringify(result)}`); 
+            console.log(`[${new Date().toISOString()}] chatgpt_response ${JSON.stringify(result)}`);
             return result;
 
         } catch (err) {
@@ -163,4 +141,4 @@ class ChatGptClient {
     }
 }
 
-export { ChatGptClient as default }
+export { ChatGptClient as default };

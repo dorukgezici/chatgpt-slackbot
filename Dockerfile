@@ -16,6 +16,3 @@ RUN npm install
 COPY src /app/src
 
 CMD xvfb-run --auto-servernum node src/app.js
-
-
-

@@ -1,6 +1,4 @@
-import bolt from "@slack/bolt";
-import { WebClient } from '@slack/web-api';
-import ChatGptClient from './chatgpt-client.js';
+import bolt from '@slack/bolt';
 
 /**
  * @typedef SlackMeta
@@ -16,9 +14,8 @@ import ChatGptClient from './chatgpt-client.js';
  */
 
 class ChatGtpSlackBot {
-
     /**
-     * @param {ChatGtpSlackBotArgs} args 
+     * @param {ChatGtpSlackBotArgs} args
      */
     constructor(args) {
 
@@ -33,45 +30,65 @@ class ChatGtpSlackBot {
      * Start listen to slack events
      * @returns {Promise<void>}
      */
-    async listen() {
+    async listen(chatGptClient) {
+        this.chatGptClient = chatGptClient;
         console.info('Start listening to slack requests.');
 
         this.slackApp.message(async ({ message }) => {
             console.log(`[${new Date().toISOString()}] received_im ${JSON.stringify(message)}`);
-            const { ts, thread_ts, channel, text } = message;
+            const {
+                ts,
+                thread_ts,
+                channel,
+                text
+            } = message;
             if (!text) {
                 return;
             }
-            this._ack(text, { channel, ts, thread_ts });
+            this._ack(text, {
+                channel,
+                ts,
+                thread_ts
+            });
         });
-    
+
         this.slackApp.event('app_mention', async ({ event }) => {
-    
             console.log(`[${new Date().toISOString()}] received_mention ${JSON.stringify(event)}`);
-    
+
             const userIdTag = `<@${process.env.SLACK_BOT_USER_ID}>`;
-            const { text, ts, channel, thread_ts } = event;
+            const {
+                text,
+                ts,
+                channel,
+                thread_ts
+            } = event;
             if (!text.includes(userIdTag)) {
                 return;
             }
             // Extract user prompt
-            const prompt = text.replace(userIdTag, '').trim();
-            this._ack(prompt, { ts, thread_ts, channel });
+            const prompt = text.replace(userIdTag, '')
+                .trim();
+            this._ack(prompt, {
+                ts,
+                thread_ts,
+                channel
+            });
         });
 
         await this.slackApp.start();
     }
 
-
     /**
      * In case the user is asking follow-up question in thread, try to obtain the previous chatgpt answer from the thread.
-     * @param {string} channel 
-     * @param {string} thread_ts 
+     * @param {string} channel
+     * @param {string} thread_ts
      * @return {Promise<{conversationId: string, parentMessageId: string}>}
      */
     async _findPreviousChatGptMessage(channel, thread_ts) {
-        
-        const replies = await this.slackApp.client.conversations.replies({ channel, ts: thread_ts });
+        const replies = await this.slackApp.client.conversations.replies({
+            channel,
+            ts: thread_ts
+        });
         if (replies?.messages) {
             for (let i = replies.messages.length - 1; i >= 0; i--) {
                 if (replies.messages[i].user === process.env.SLACK_BOT_USER_ID) {
@@ -82,7 +99,7 @@ class ChatGtpSlackBot {
                         return {
                             conversationId: matches[1],
                             parentMessageId: matches[2],
-                        }
+                        };
                     }
                 }
             }
@@ -91,9 +108,9 @@ class ChatGtpSlackBot {
     }
 
     /**
-     * @param {ChatGptAnswer} answer 
-     * @param {ChatGptQuestion} question 
-     * @param {SlackMeta} slackMeta 
+     * @param {ChatGptAnswer} answer
+     * @param {ChatGptQuestion} question
+     * @param {SlackMeta} slackMeta
      */
     async replyAnswer(answer, question, slackMeta) {
         await this.slackApp.client.chat.postMessage({
@@ -101,33 +118,48 @@ class ChatGtpSlackBot {
             thread_ts: slackMeta.ts,
             text: `>${question.prompt}${question.parentMessageId ? ' (follow-up)' : ''}\n${answer.response}\n\n_ref:${answer.conversationId}:${answer.messageId}_`
         });
-        await this.slackApp.client.reactions.add({ channel: slackMeta.channel, name: 'white_check_mark', timestamp: slackMeta.ts });
-        await this.slackApp.client.reactions.remove({ channel: slackMeta.channel, name: 'loading', timestamp: slackMeta.ts });
+        await this.slackApp.client.reactions.add({
+            channel: slackMeta.channel,
+            name: 'white_check_mark',
+            timestamp: slackMeta.ts
+        });
+        await this.slackApp.client.reactions.remove({
+            channel: slackMeta.channel,
+            name: 'loading',
+            timestamp: slackMeta.ts
+        });
     }
 
     /**
      * @param {Error} err
-     * @param {ChatGptQuestion} question 
-     * @param {SlackMeta} slackMeta 
+     * @param {ChatGptQuestion} question
+     * @param {SlackMeta} slackMeta
      */
     async replyError(err, question, slackMeta) {
         await this.slackApp.client.chat.postMessage({
             channel: slackMeta.channel,
-            thread_ts: slackMeta.ts, 
+            thread_ts: slackMeta.ts,
             text: `>${question.prompt}${question.parentMessageId ? ' (follow-up)' : ''}\nError: ${err.message} \nPlease ask again...`
         });
-        
-        await this.slackApp.client.reactions.add({ channel: slackMeta.channel, name: 'x', timestamp: slackMeta.ts });
-        await this.slackApp.client.reactions.remove({ channel: slackMeta.channel, name: 'loading', timestamp: slackMeta.ts });
+
+        await this.slackApp.client.reactions.add({
+            channel: slackMeta.channel,
+            name: 'x',
+            timestamp: slackMeta.ts
+        });
+        await this.slackApp.client.reactions.remove({
+            channel: slackMeta.channel,
+            name: 'loading',
+            timestamp: slackMeta.ts
+        });
     }
 
     /**
-     * @param {string} prompt 
-     * @param {SlackMeta} slackMeta 
-     * @returns 
+     * @param {string} prompt
+     * @param {SlackMeta} slackMeta
+     * @returns
      */
     async _ack(prompt, slackMeta) {
-
         if (prompt.trim().length === 0) {
             return;
         }
@@ -137,13 +169,17 @@ class ChatGtpSlackBot {
             prevAns = await this._findPreviousChatGptMessage(slackMeta.channel, slackMeta.thread_ts, this.slackApp.client);
         }
         // Leave loading reaction
-        const reaction = await this.slackApp.client.reactions.add({ channel: slackMeta.channel, name: 'loading', timestamp: slackMeta.ts });
-        await ChatGptClient.ask({
+        const reaction = await this.slackApp.client.reactions.add({
+            channel: slackMeta.channel,
+            name: 'loading',
+            timestamp: slackMeta.ts
+        });
+        await this.chatGptClient.ask({
             prompt,
-            conversationId: prevAns?.conversationId, 
+            conversationId: prevAns?.conversationId,
             parentMessageId: prevAns?.parentMessageId
         }, slackMeta);
     }
 }
 
-export { ChatGtpSlackBot as default }
+export { ChatGtpSlackBot as default };
