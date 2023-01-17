@@ -512,10 +512,10 @@ character-entities@^2.0.0:
   resolved "https://registry.yarnpkg.com/character-entities/-/character-entities-2.0.2.tgz#2d09c2e72cd9523076ccb21157dff66ad43fcc22"
   integrity sha512-shx7oQ0Awen/BRIdkjkvz54PnEEI/EjwXDSIZp86/KKdbafHh1Df/RYGBhn4hbe2+uKC9FnT5UCEdyPz3ai9hQ==
 
-chatgpt@3.3.10:
-  version "3.3.10"
-  resolved "https://registry.yarnpkg.com/chatgpt/-/chatgpt-3.3.10.tgz#e80a4629a5823d8e1d43a345de3d002cf55e181c"
-  integrity sha512-1LAjP5NjLZfSd25G5hQcvTp9BAK/kludcv+4T/3s2diCYIWvc0tETVcvurgXwINatELAZMnVrbLxtltgU/GZrw==
+chatgpt@3.4.2:
+  version "3.4.2"
+  resolved "https://registry.yarnpkg.com/chatgpt/-/chatgpt-3.4.2.tgz#76cedca35ae198fcce0157a61e8abf9089deb526"
+  integrity sha512-w/4IfYrBW8nZ01tI8kG9baqS5VUab3Ae9iD/pk+enr2Gn9tGE7MWLoNWs+qb/X3uCvmj48yEqCk71DycFgHA2g==
   dependencies:
     delay "^5.0.0"
     eventsource-parser "^0.0.5"
@@ -851,10 +851,10 @@ eslint-visitor-keys@^3.3.0:
   resolved "https://registry.yarnpkg.com/eslint-visitor-keys/-/eslint-visitor-keys-3.3.0.tgz#f6480fa6b1f30efe2d1968aa8ac745b862469826"
   integrity sha512-mQ+suqKJVyeuwGYHAdjMFqjCyfl8+Ldnxuyp3ldiMBFKkvytrXUZWaiPCEav8qDHKty44bD+qV1IP4T+w+xXRA==
 
-eslint@8.31.0:
-  version "8.31.0"
-  resolved "https://registry.yarnpkg.com/eslint/-/eslint-8.31.0.tgz#75028e77cbcff102a9feae1d718135931532d524"
-  integrity sha512-0tQQEVdmPZ1UtUKXjX7EMm9BlgJ08G90IhWh0PKDCb3ZLsgAOHI8fYSIzYVZej92zsgq+ft0FGsxhJ3xo2tbuA==
+eslint@8.32.0:
+  version "8.32.0"
+  resolved "https://registry.yarnpkg.com/eslint/-/eslint-8.32.0.tgz#d9690056bb6f1a302bd991e7090f5b68fbaea861"
+  integrity sha512-nETVXpnthqKPFyuY2FNjz/bEd6nbosRgKbkgS/y1C7LJop96gYHWpiguLecMHQ2XCPxn77DS0P+68WzG6vkZSQ==
   dependencies:
     "@eslint/eslintrc" "^1.4.1"
     "@humanwhocodes/config-array" "^0.11.8"
@@ -2266,10 +2266,10 @@ punycode@^2.1.0:
   resolved "https://registry.yarnpkg.com/punycode/-/punycode-2.1.1.tgz#b58b010ac40c22c5657616c8d2c2c02c7bf479ec"
   integrity sha512-XRsRjdf+j5ml+y/6GKHPZbrF/8p2Yga0JPtdqTIY2Xe5ohJPD9saDJJLPvp9+NSBprVvevdXZybnj2cv8OEd0A==
 
-puppeteer-core@19.4.1:
-  version "19.4.1"
-  resolved "https://registry.yarnpkg.com/puppeteer-core/-/puppeteer-core-19.4.1.tgz#f4875943841ebdb6fc2ad7a475add958692b0237"
-  integrity sha512-JHIuqtqrUAx4jGOTxXu4ilapV2jabxtVMA/e4wwFUMvtSsqK4nVBSI+Z1SKDoz7gRy/JUIc8WzmfocCa6SIZ1w==
+puppeteer-core@19.5.2:
+  version "19.5.2"
+  resolved "https://registry.yarnpkg.com/puppeteer-core/-/puppeteer-core-19.5.2.tgz#9b454b0ef89d3f07e20158dd4ced6ebd85d4dadb"
+  integrity sha512-Rqk+3kqM+Z2deooTYqcYt8lRtGffJdifWa9td9nbJSjhANWsFouk8kLBNUKycewCCFHM8TZUKS0x28OllavW2A==
   dependencies:
     cross-fetch "3.1.5"
     debug "4.3.4"
@@ -2338,16 +2338,16 @@ puppeteer-extra@^3.3.4:
     debug "^4.1.1"
     deepmerge "^4.2.2"
 
-puppeteer@19.4.1:
-  version "19.4.1"
-  resolved "https://registry.yarnpkg.com/puppeteer/-/puppeteer-19.4.1.tgz#cac7d3f0084badebb8ebacbe6f4d7262e7f21818"
-  integrity sha512-PCnrR13B8A+VSEDXRmrNXRZbrkF1tfsI1hKSC7vs13eNS6CUD3Y4FA8SF8/VZy+Pm1kg5AggJT2Nu3HLAtGkFg==
+puppeteer@19.5.2:
+  version "19.5.2"
+  resolved "https://registry.yarnpkg.com/puppeteer/-/puppeteer-19.5.2.tgz#f09ed55d5263cacaac4c5818d0d884b1e1d938b0"
+  integrity sha512-xlqRyrhXhVH114l79Y0XqYXUVG+Yfw4sKlvN55t8Y9DxtA5fzI1uqF8SVXbWK5DUMbD6Jo4lpixTZCTTZGD05g==
   dependencies:
     cosmiconfig "8.0.0"
     https-proxy-agent "5.0.1"
     progress "2.0.3"
     proxy-from-env "1.1.0"
-    puppeteer-core "19.4.1"
+    puppeteer-core "19.5.2"
 
 qs@6.11.0:
   version "6.11.0"
